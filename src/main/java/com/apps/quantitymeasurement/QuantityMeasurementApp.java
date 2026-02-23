@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 public class QuantityMeasurementApp {
 
-    // Equality for JUnit
+    // ---------------- BUSINESS METHODS (For JUnit) ----------------
+
     public static boolean demonstrateLengthComparison(
             double v1, Length.LengthUnit u1,
             double v2, Length.LengthUnit u2) {
@@ -14,33 +15,43 @@ public class QuantityMeasurementApp {
         return l1.equals(l2);
     }
 
-    // Conversion for JUnit
     public static Length demonstrateLengthConversion(
             double value,
-            Length.LengthUnit fromUnit,
-            Length.LengthUnit toUnit) {
+            Length.LengthUnit from,
+            Length.LengthUnit to) {
 
-        if (fromUnit == null || toUnit == null) {
+        if (from == null || to == null)
             throw new IllegalArgumentException("Units cannot be null");
-        }
 
-        Length source = new Length(value, fromUnit);
-        return source.convertTo(toUnit);
+        Length source = new Length(value, from);
+        return source.convertTo(to);
     }
 
-    // -------- Console Methods Below --------
+    public static Length demonstrateLengthAddition(Length l1, Length l2) {
+
+        if (l1 == null || l2 == null)
+            throw new IllegalArgumentException("Length cannot be null");
+
+        return l1.add(l2);
+    }
+
+    // ---------------- CONSOLE METHODS ----------------
+
+    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
+        return l1.equals(l2);
+    }
 
     public static void demonstrateLengthComparison(Scanner sc) {
         System.out.print("Enter first value: ");
-        double value1 = sc.nextDouble();
-        Length.LengthUnit unit1 = getUnit(sc, "first");
+        double v1 = sc.nextDouble();
+        Length.LengthUnit u1 = getUnit(sc, "first");
 
         System.out.print("Enter second value: ");
-        double value2 = sc.nextDouble();
-        Length.LengthUnit unit2 = getUnit(sc, "second");
+        double v2 = sc.nextDouble();
+        Length.LengthUnit u2 = getUnit(sc, "second");
 
-        Length l1 = new Length(value1, unit1);
-        Length l2 = new Length(value2, unit2);
+        Length l1 = new Length(v1, u1);
+        Length l2 = new Length(v2, u2);
 
         System.out.println(l1 + " == " + l2 + " ? " + l1.equals(l2));
     }
@@ -49,17 +60,31 @@ public class QuantityMeasurementApp {
         System.out.print("Enter value to convert: ");
         double value = sc.nextDouble();
 
-        Length.LengthUnit fromUnit = getUnit(sc, "source");
-        Length.LengthUnit toUnit = getUnit(sc, "target");
+        Length.LengthUnit from = getUnit(sc, "source");
+        Length.LengthUnit to = getUnit(sc, "target");
 
-        Length source = new Length(value, fromUnit);
-        Length converted = source.convertTo(toUnit);
+        Length source = new Length(value, from);
+        Length converted = source.convertTo(to);
 
         System.out.println(source + " -> " + converted);
     }
 
-    public static Length.LengthUnit getUnit(Scanner sc, String label) {
+    public static void demonstrateLengthAddition(Scanner sc) {
+        System.out.print("Enter first value: ");
+        double v1 = sc.nextDouble();
+        Length.LengthUnit u1 = getUnit(sc, "first");
 
+        System.out.print("Enter second value: ");
+        double v2 = sc.nextDouble();
+        Length.LengthUnit u2 = getUnit(sc, "second");
+
+        Length l1 = new Length(v1, u1);
+        Length l2 = new Length(v2, u2);
+
+        System.out.println(l1 + " + " + l2 + " = " + l1.add(l2));
+    }
+
+    public static Length.LengthUnit getUnit(Scanner sc, String label) {
         System.out.println("Select " + label + " unit:");
         System.out.println("1. FEET");
         System.out.println("2. INCHES");
@@ -82,6 +107,7 @@ public class QuantityMeasurementApp {
 
         demonstrateLengthComparison(sc);
         demonstrateLengthConversion(sc);
+        demonstrateLengthAddition(sc);
 
         sc.close();
     }
