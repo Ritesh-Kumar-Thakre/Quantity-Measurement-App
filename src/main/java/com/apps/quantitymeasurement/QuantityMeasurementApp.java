@@ -4,132 +4,162 @@ import java.util.Scanner;
 
 public class QuantityMeasurementApp {
 
-    // ---------------- BUSINESS METHODS (For JUnit) ----------------
+	// ---------------- BUSINESS METHODS (For JUnit) ----------------
 
-    public static boolean demonstrateLengthComparison(
-            double v1, LengthUnit u1,
-            double v2, LengthUnit u2) {
+	public static boolean demonstrateLengthComparison(double v1, LengthUnit u1, double v2, LengthUnit u2) {
 
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
-        return l1.equals(l2);
-    }
+		Length l1 = new Length(v1, u1);
+		Length l2 = new Length(v2, u2);
+		return l1.equals(l2);
+	}
 
-    public static Length demonstrateLengthConversion(
-            double value,
-            LengthUnit from,
-            LengthUnit to) {
+	public static Length demonstrateLengthConversion(double value, LengthUnit from, LengthUnit to) {
 
-        if (from == null || to == null)
-            throw new IllegalArgumentException("Units cannot be null");
+		if (from == null || to == null)
+			throw new IllegalArgumentException("Units cannot be null");
 
-        Length source = new Length(value, from);
-        return source.convertTo(to);
-    }
+		Length source = new Length(value, from);
+		return source.convertTo(to);
+	}
 
-    public static Length demonstrateLengthAddition(Length l1, Length l2) {
+	public static Length demonstrateLengthAddition(Length l1, Length l2) {
 
-        if (l1 == null || l2 == null)
-            throw new IllegalArgumentException("Length cannot be null");
+		if (l1 == null || l2 == null)
+			throw new IllegalArgumentException("Length cannot be null");
 
-        return l1.add(l2);
-    }
+		return l1.add(l2);
+	}
 
-    // UC7 Business Method (Addition with target)
-    public static Length demonstrateLengthAddition(
-            Length l1,
-            Length l2,
-            LengthUnit targetUnit) {
+	// UC7 Business Method (Addition with target)
+	public static Length demonstrateLengthAddition(Length l1, Length l2, LengthUnit targetUnit) {
 
-        if (l1 == null || l2 == null)
-            throw new IllegalArgumentException("Length cannot be null");
+		if (l1 == null || l2 == null)
+			throw new IllegalArgumentException("Length cannot be null");
 
-        return l1.add(l2, targetUnit);
-    }
+		return l1.add(l2, targetUnit);
+	}
 
-    // ---------------- CONSOLE METHODS ----------------
+	// ---------------- CONSOLE METHODS ----------------
 
-    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
-        return l1.equals(l2);
-    }
+	public static boolean demonstrateLengthEquality(Length l1, Length l2) {
+		return l1.equals(l2);
+	}
 
-    public static void demonstrateLengthAdditionWithTarget(Scanner sc) {
+	public static void demonstrateLengthAdditionWithTarget(Scanner sc) {
 
-        System.out.print("Enter first value: ");
-        double v1 = sc.nextDouble();
-        LengthUnit u1 = getUnit(sc, "first");
+		System.out.print("Enter first value: ");
+		double v1 = sc.nextDouble();
+		LengthUnit u1 = getUnit(sc, "first");
 
-        System.out.print("Enter second value: ");
-        double v2 = sc.nextDouble();
-        LengthUnit u2 = getUnit(sc, "second");
+		System.out.print("Enter second value: ");
+		double v2 = sc.nextDouble();
+		LengthUnit u2 = getUnit(sc, "second");
 
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
+		Length l1 = new Length(v1, u1);
+		Length l2 = new Length(v2, u2);
 
-        LengthUnit target = getUnit(sc, "target");
+		LengthUnit target = getUnit(sc, "target");
 
-        Length result = l1.add(l2, target);
+		Length result = l1.add(l2, target);
 
-        System.out.println(l1 + " + " + l2 + " = " + result);
-    }
+		System.out.println(l1 + " + " + l2 + " = " + result);
+	}
 
-    public static void demonstrateLengthConversion(Scanner sc) {
+	public static void demonstrateLengthConversion(Scanner sc) {
 
-        System.out.print("Enter value to convert: ");
-        double value = sc.nextDouble();
+		System.out.print("Enter value to convert: ");
+		double value = sc.nextDouble();
 
-        LengthUnit from = getUnit(sc, "source");
-        LengthUnit to = getUnit(sc, "target");
+		LengthUnit from = getUnit(sc, "source");
+		LengthUnit to = getUnit(sc, "target");
 
-        Length source = new Length(value, from);
-        Length converted = source.convertTo(to);
+		Length source = new Length(value, from);
+		Length converted = source.convertTo(to);
 
-        System.out.println(source + " -> " + converted);
-    }
+		System.out.println(source + " -> " + converted);
+	}
 
-    public static void demonstrateLengthAddition(Scanner sc) {
+	public static void demonstrateLengthAddition(Scanner sc) {
 
-        System.out.print("Enter first value: ");
-        double v1 = sc.nextDouble();
-        LengthUnit u1 = getUnit(sc, "first");
+		System.out.print("Enter first value: ");
+		double v1 = sc.nextDouble();
+		LengthUnit u1 = getUnit(sc, "first");
 
-        System.out.print("Enter second value: ");
-        double v2 = sc.nextDouble();
-        LengthUnit u2 = getUnit(sc, "second");
+		System.out.print("Enter second value: ");
+		double v2 = sc.nextDouble();
+		LengthUnit u2 = getUnit(sc, "second");
 
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
+		Length l1 = new Length(v1, u1);
+		Length l2 = new Length(v2, u2);
 
-        System.out.println(l1 + " + " + l2 + " = " + l1.add(l2));
-    }
+		System.out.println(l1 + " + " + l2 + " = " + l1.add(l2));
+	}
 
-    public static LengthUnit getUnit(Scanner sc, String label) {
+	public static LengthUnit getUnit(Scanner sc, String label) {
 
-        System.out.println("Select " + label + " unit:");
-        System.out.println("1. FEET");
-        System.out.println("2. INCHES");
-        System.out.println("3. YARDS");
-        System.out.println("4. CENTIMETERS");
+		System.out.println("Select " + label + " unit:");
+		System.out.println("1. FEET");
+		System.out.println("2. INCHES");
+		System.out.println("3. YARDS");
+		System.out.println("4. CENTIMETERS");
 
-        int choice = sc.nextInt();
+		int choice = sc.nextInt();
 
-        switch (choice) {
-            case 1: return LengthUnit.FEET;
-            case 2: return LengthUnit.INCHES;
-            case 3: return LengthUnit.YARDS;
-            case 4: return LengthUnit.CENTIMETERS;
-            default: throw new IllegalArgumentException("Invalid Unit Choice");
-        }
-    }
+		switch (choice) {
+		case 1:
+			return LengthUnit.FEET;
+		case 2:
+			return LengthUnit.INCHES;
+		case 3:
+			return LengthUnit.YARDS;
+		case 4:
+			return LengthUnit.CENTIMETERS;
+		default:
+			throw new IllegalArgumentException("Invalid Unit Choice");
+		}
+	}
+	// -------- WEIGHT BUSINESS METHODS --------
 
-    public static void main(String[] args) {
+	public static boolean demonstrateWeightComparison(double v1, WeightUnit u1, double v2, WeightUnit u2) {
 
-        Scanner sc = new Scanner(System.in);
+		Weight w1 = new Weight(v1, u1);
+		Weight w2 = new Weight(v2, u2);
+		return w1.equals(w2);
+	}
 
-        demonstrateLengthAdditionWithTarget(sc);
-        demonstrateLengthConversion(sc);
-        demonstrateLengthAddition(sc);
+	public static Weight demonstrateWeightConversion(double value, WeightUnit from, WeightUnit to) {
 
-        sc.close();
-    }
+		if (from == null || to == null)
+			throw new IllegalArgumentException("Units cannot be null");
+
+		Weight source = new Weight(value, from);
+		return source.convertTo(to);
+	}
+
+	public static Weight demonstrateWeightAddition(Weight w1, Weight w2) {
+
+		if (w1 == null || w2 == null)
+			throw new IllegalArgumentException("Weight cannot be null");
+
+		return w1.add(w2);
+	}
+
+	public static Weight demonstrateWeightAddition(Weight w1, Weight w2, WeightUnit targetUnit) {
+
+		if (w1 == null || w2 == null)
+			throw new IllegalArgumentException("Weight cannot be null");
+
+		return w1.add(w2, targetUnit);
+	}
+
+	public static void main(String[] args) {
+
+		Scanner sc = new Scanner(System.in);
+
+		demonstrateLengthAdditionWithTarget(sc);
+		demonstrateLengthConversion(sc);
+		demonstrateLengthAddition(sc);
+
+		sc.close();
+	}
 }
