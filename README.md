@@ -1,96 +1,88 @@
-# UC8 – Refactoring Unit Enum to Standalone with Conversion Responsibility
+# UC9 – Weight Measurement Equality, Conversion, and Addition
 
 ## 📌 Overview
 
-UC8 refactors the architecture developed from UC1–UC7 by extracting the `LengthUnit` enum from inside the `QuantityLength` class into a standalone top-level enum.
+UC9 extends the **Quantity Measurement Application** to support **weight measurements** in addition to length. This use case introduces a new measurement category — **weight** — alongside length, demonstrating that the scalable design from UC1–UC8 can be extended to multiple categories.
 
-In previous implementations, embedding `LengthUnit` within `QuantityLength` created tighter coupling, limited scalability, and introduced architectural constraints when expanding to multiple measurement categories (length, weight, volume, etc.).
+Weight measurements support:
 
-UC8 resolves this by:
+- Equality comparison
+- Unit conversion
+- Addition operations (with optional target unit)
 
-- Moving `LengthUnit` to a separate file
-- Assigning conversion responsibility directly to the enum
-- Delegating conversion logic from `QuantityLength` to `LengthUnit`
-- Preserving all existing functionality from UC1–UC7
+Supported weight units:
 
-This refactoring improves cohesion, reduces coupling, eliminates circular dependency risks, and establishes a scalable architecture for future measurement systems.
+- **Kilogram (kg)** — Base unit for weight conversions  
+- **Gram (g)** — 1 kg = 1000 g  
+- **Pound (lb)** — 1 lb ≈ 0.453592 kg :contentReference[oaicite:0]{index=0}
+
+Weight measurements are treated independently from length measurements — they are not directly comparable (e.g., 1 foot ≠ 1 kilogram). :contentReference[oaicite:1]{index=1}
 
 ---
 
 ## 🎯 Objective
 
-- Enforce Single Responsibility Principle (SRP)
-- Separate unit logic from quantity logic
-- Centralize conversion responsibility
-- Improve maintainability and readability
-- Enable scalable multi-category measurement support
-- Preserve backward compatibility
+- Add support for **weight measurements** using a new `WeightUnit` enum
+- Apply the same design patterns used for length
+- Maintain backward compatibility
+- Preserve precision and immutability
+- Enable weight equality, conversion, and arithmetic
 
 ---
 
-## 🏗️ Architectural Transformation
+## 🎯 Preconditions
 
-### 🔹 Before UC8
-QuantityLength
-└── nested enum LengthUnit
-
-Issues:
-- Conversion logic partially inside QuantityLength
-- Tight coupling between quantity and unit
-- Harder to scale across measurement categories
-- Risk of circular dependencies
+- `WeightUnit` enum exists as a standalone class
+- `QuantityWeight` class mirrors `QuantityLength` with conversion, equality, and arithmetic
+- Conversion constants are defined relative to kilogram
+- Length measurements remain supported and unaffected
+- Cross-category comparisons are disallowed :contentReference[oaicite:2]{index=2}
 
 ---
 
-### 🔹 After UC8
-LengthUnit (Standalone Enum)
-QuantityLength (Delegates conversion)
+## 🔄 Main Flow
 
-Improvements:
-- Clear separation of concerns
-- Unit conversion centralized in LengthUnit
-- QuantityLength simplified
-- Scalable structure for new measurement types
+### 1. Equality Comparison
+
+- Input: Two weight values with units
+- Convert both values to kilograms
+- Compare using `equals()`
+- Return result (true/false) :contentReference[oaicite:3]{index=3}
+
+### 2. Unit Conversion
+
+- Input: Numeric value, source unit, target unit
+- Convert to base unit (kilogram)
+- Convert to target unit
+- Return a new `QuantityWeight` object :contentReference[oaicite:4]{index=4}
+
+### 3. Addition
+
+- Input: Two `QuantityWeight` objects (with optional explicit target unit)
+- Convert both to base unit
+- Add values
+- Convert sum to target or first operand’s unit
+- Return new `QuantityWeight` :contentReference[oaicite:5]{index=5}
 
 ---
 
-## 🧱 Standalone LengthUnit Enum
+## 🧱 WeightUnit Enum
 
-`LengthUnit` is now a top-level enum responsible for:
-
-- Defining conversion factors
-- Converting values to base unit
-- Converting values from base unit
-
-### Base Unit
-
-The system uses **FEET** as the base unit.
-
-### Example Implementation
+Define `WeightUnit` with conversion factors relative to base unit (**kilogram**):
 
 ```java
-public enum LengthUnit {
+public enum WeightUnit {
+    KILOGRAM(1.0),
+    GRAM(0.001),
+    POUND(0.453592);
 
-    FEET(1.0),
-    INCHES(1.0 / 12),
-    YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
-
-    private final double factorToFeet;
-
-    LengthUnit(double factorToFeet) {
-        this.factorToFeet = factorToFeet;
-    }
+    private final double toKilogramFactor;
 
     public double convertToBaseUnit(double value) {
-        return value * factorToFeet;
+        return value * toKilogramFactor;
     }
 
     public double convertFromBaseUnit(double baseValue) {
-        return baseValue / factorToFeet;
-    }
-
-    public double getConversionFactor() {
-        return factorToFeet;
+        return baseValue / toKilogramFactor;
     }
 }
