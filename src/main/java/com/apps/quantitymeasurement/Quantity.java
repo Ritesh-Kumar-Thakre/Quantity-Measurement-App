@@ -92,4 +92,48 @@ public class Quantity<U extends Unit> {
 
 		return new Quantity<>(result, targetUnit);
 	}
+
+	// Inside Quantity<U> class
+	public Quantity<U> subtract(Quantity<U> other) {
+		if (other == null) {
+			throw new IllegalArgumentException("Operand cannot be null");
+		}
+		// Category check: must be same unit enum class
+		if (!this.unit.getClass().equals(other.unit.getClass())) {
+			throw new IllegalArgumentException("Different measurement categories");
+		}
+		double diffBase = this.toBase() - other.toBase();
+		double result = unit.fromBase(diffBase);
+		result = Math.round(result * 1000000.0) / 1000000.0;
+		return new Quantity<>(result, this.unit);
+	}
+
+	public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+		if (other == null) {
+			throw new IllegalArgumentException("Operand cannot be null");
+		}
+		if (targetUnit == null) {
+			throw new IllegalArgumentException("Target unit cannot be null");
+		}
+		if (!this.unit.getClass().equals(other.unit.getClass())) {
+			throw new IllegalArgumentException("Different measurement categories");
+		}
+		double diffBase = this.toBase() - other.toBase();
+		double result = targetUnit.fromBase(diffBase);
+		result = Math.round(result * 1000000.0) / 1000000.0;
+		return new Quantity<>(result, targetUnit);
+	}
+
+	public double divide(Quantity<U> other) {
+		if (other == null) {
+			throw new IllegalArgumentException("Operand cannot be null");
+		}
+		if (!this.unit.getClass().equals(other.unit.getClass())) {
+			throw new IllegalArgumentException("Different measurement categories");
+		}
+		if (other.toBase() == 0.0) {
+			throw new ArithmeticException("Division by zero");
+		}
+		return this.toBase() / other.toBase();
+	}
 }
