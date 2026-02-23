@@ -142,6 +142,21 @@ public class QuantityMeasurementApp {
             default: throw new IllegalArgumentException("Invalid Weight Unit");
         }
     }
+    
+    public static <U extends Unit> Quantity<U> demonstrateSubtraction(
+            Quantity<U> q1, Quantity<U> q2) {
+        return q1.subtract(q2);
+    }
+
+    public static <U extends Unit> Quantity<U> demonstrateSubtraction(
+            Quantity<U> q1, Quantity<U> q2, U targetUnit) {
+        return q1.subtract(q2, targetUnit);
+    }
+
+    public static <U extends Unit> double demonstrateDivision(
+            Quantity<U> q1, Quantity<U> q2) {
+        return q1.divide(q2);
+    }
 
     // ================= MAIN =================
 
