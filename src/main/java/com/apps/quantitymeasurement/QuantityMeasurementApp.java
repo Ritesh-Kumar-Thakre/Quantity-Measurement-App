@@ -4,162 +4,168 @@ import java.util.Scanner;
 
 public class QuantityMeasurementApp {
 
-	// ---------------- BUSINESS METHODS (For JUnit) ----------------
+    // ================= BUSINESS METHODS (For JUnit) =================
 
-	public static boolean demonstrateLengthComparison(double v1, LengthUnit u1, double v2, LengthUnit u2) {
+    public static <U extends Unit> boolean demonstrateComparison(
+            double v1, U u1,
+            double v2, U u2) {
 
-		Length l1 = new Length(v1, u1);
-		Length l2 = new Length(v2, u2);
-		return l1.equals(l2);
-	}
+        Quantity<U> q1 = new Quantity<>(v1, u1);
+        Quantity<U> q2 = new Quantity<>(v2, u2);
 
-	public static Length demonstrateLengthConversion(double value, LengthUnit from, LengthUnit to) {
+        return q1.equals(q2);
+    }
 
-		if (from == null || to == null)
-			throw new IllegalArgumentException("Units cannot be null");
+    public static <U extends Unit> Quantity<U> demonstrateConversion(
+            double value,
+            U from,
+            U to) {
 
-		Length source = new Length(value, from);
-		return source.convertTo(to);
-	}
+        if (from == null || to == null)
+            throw new IllegalArgumentException("Units cannot be null");
 
-	public static Length demonstrateLengthAddition(Length l1, Length l2) {
+        return new Quantity<>(value, from).convertTo(to);
+    }
 
-		if (l1 == null || l2 == null)
-			throw new IllegalArgumentException("Length cannot be null");
+    public static <U extends Unit> Quantity<U> demonstrateAddition(
+            Quantity<U> q1,
+            Quantity<U> q2) {
 
-		return l1.add(l2);
-	}
+        if (q1 == null || q2 == null)
+            throw new IllegalArgumentException("Quantity cannot be null");
 
-	// UC7 Business Method (Addition with target)
-	public static Length demonstrateLengthAddition(Length l1, Length l2, LengthUnit targetUnit) {
+        return q1.add(q2);
+    }
 
-		if (l1 == null || l2 == null)
-			throw new IllegalArgumentException("Length cannot be null");
+    public static <U extends Unit> Quantity<U> demonstrateAddition(
+            Quantity<U> q1,
+            Quantity<U> q2,
+            U targetUnit) {
 
-		return l1.add(l2, targetUnit);
-	}
+        if (q1 == null || q2 == null)
+            throw new IllegalArgumentException("Quantity cannot be null");
 
-	// ---------------- CONSOLE METHODS ----------------
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
 
-	public static boolean demonstrateLengthEquality(Length l1, Length l2) {
-		return l1.equals(l2);
-	}
+        return q1.add(q2, targetUnit);
+    }
 
-	public static void demonstrateLengthAdditionWithTarget(Scanner sc) {
+    // ================= CONSOLE METHODS =================
 
-		System.out.print("Enter first value: ");
-		double v1 = sc.nextDouble();
-		LengthUnit u1 = getUnit(sc, "first");
+    public static void demonstrateLengthOperations(Scanner sc) {
 
-		System.out.print("Enter second value: ");
-		double v2 = sc.nextDouble();
-		LengthUnit u2 = getUnit(sc, "second");
+        System.out.println("===== LENGTH OPERATIONS =====");
 
-		Length l1 = new Length(v1, u1);
-		Length l2 = new Length(v2, u2);
+        Quantity<LengthUnit> q1 = getLengthInput(sc, "first");
+        Quantity<LengthUnit> q2 = getLengthInput(sc, "second");
 
-		LengthUnit target = getUnit(sc, "target");
+        System.out.println("Equality: " + q1.equals(q2));
 
-		Length result = l1.add(l2, target);
+        LengthUnit target = getLengthUnit(sc, "target for addition");
+        System.out.println("Addition Result: " + q1.add(q2, target));
 
-		System.out.println(l1 + " + " + l2 + " = " + result);
-	}
+        LengthUnit convertTarget = getLengthUnit(sc, "target for conversion");
+        System.out.println("Conversion Result: " + q1.convertTo(convertTarget));
+    }
 
-	public static void demonstrateLengthConversion(Scanner sc) {
+    public static void demonstrateWeightOperations(Scanner sc) {
 
-		System.out.print("Enter value to convert: ");
-		double value = sc.nextDouble();
+        System.out.println("===== WEIGHT OPERATIONS =====");
 
-		LengthUnit from = getUnit(sc, "source");
-		LengthUnit to = getUnit(sc, "target");
+        Quantity<WeightUnit> q1 = getWeightInput(sc, "first");
+        Quantity<WeightUnit> q2 = getWeightInput(sc, "second");
 
-		Length source = new Length(value, from);
-		Length converted = source.convertTo(to);
+        System.out.println("Equality: " + q1.equals(q2));
 
-		System.out.println(source + " -> " + converted);
-	}
+        WeightUnit target = getWeightUnit(sc, "target for addition");
+        System.out.println("Addition Result: " + q1.add(q2, target));
 
-	public static void demonstrateLengthAddition(Scanner sc) {
+        WeightUnit convertTarget = getWeightUnit(sc, "target for conversion");
+        System.out.println("Conversion Result: " + q1.convertTo(convertTarget));
+    }
 
-		System.out.print("Enter first value: ");
-		double v1 = sc.nextDouble();
-		LengthUnit u1 = getUnit(sc, "first");
+    // ================= INPUT HELPERS =================
 
-		System.out.print("Enter second value: ");
-		double v2 = sc.nextDouble();
-		LengthUnit u2 = getUnit(sc, "second");
+    private static Quantity<LengthUnit> getLengthInput(Scanner sc, String label) {
 
-		Length l1 = new Length(v1, u1);
-		Length l2 = new Length(v2, u2);
+        System.out.print("Enter " + label + " length value: ");
+        double value = sc.nextDouble();
 
-		System.out.println(l1 + " + " + l2 + " = " + l1.add(l2));
-	}
+        LengthUnit unit = getLengthUnit(sc, label + " length unit");
 
-	public static LengthUnit getUnit(Scanner sc, String label) {
+        return new Quantity<>(value, unit);
+    }
 
-		System.out.println("Select " + label + " unit:");
-		System.out.println("1. FEET");
-		System.out.println("2. INCHES");
-		System.out.println("3. YARDS");
-		System.out.println("4. CENTIMETERS");
+    private static LengthUnit getLengthUnit(Scanner sc, String label) {
 
-		int choice = sc.nextInt();
+        System.out.println("Select " + label + ":");
+        System.out.println("1. FEET");
+        System.out.println("2. INCHES");
+        System.out.println("3. YARDS");
+        System.out.println("4. CENTIMETERS");
 
-		switch (choice) {
-		case 1:
-			return LengthUnit.FEET;
-		case 2:
-			return LengthUnit.INCHES;
-		case 3:
-			return LengthUnit.YARDS;
-		case 4:
-			return LengthUnit.CENTIMETERS;
-		default:
-			throw new IllegalArgumentException("Invalid Unit Choice");
-		}
-	}
-	// -------- WEIGHT BUSINESS METHODS --------
+        int choice = sc.nextInt();
 
-	public static boolean demonstrateWeightComparison(double v1, WeightUnit u1, double v2, WeightUnit u2) {
+        switch (choice) {
+            case 1: return LengthUnit.FEET;
+            case 2: return LengthUnit.INCHES;
+            case 3: return LengthUnit.YARDS;
+            case 4: return LengthUnit.CENTIMETERS;
+            default: throw new IllegalArgumentException("Invalid Length Unit");
+        }
+    }
 
-		Weight w1 = new Weight(v1, u1);
-		Weight w2 = new Weight(v2, u2);
-		return w1.equals(w2);
-	}
+    private static Quantity<WeightUnit> getWeightInput(Scanner sc, String label) {
 
-	public static Weight demonstrateWeightConversion(double value, WeightUnit from, WeightUnit to) {
+        System.out.print("Enter " + label + " weight value: ");
+        double value = sc.nextDouble();
 
-		if (from == null || to == null)
-			throw new IllegalArgumentException("Units cannot be null");
+        WeightUnit unit = getWeightUnit(sc, label + " weight unit");
 
-		Weight source = new Weight(value, from);
-		return source.convertTo(to);
-	}
+        return new Quantity<>(value, unit);
+    }
 
-	public static Weight demonstrateWeightAddition(Weight w1, Weight w2) {
+    private static WeightUnit getWeightUnit(Scanner sc, String label) {
 
-		if (w1 == null || w2 == null)
-			throw new IllegalArgumentException("Weight cannot be null");
+        System.out.println("Select " + label + ":");
+        System.out.println("1. KILOGRAM");
+        System.out.println("2. GRAM");
+        System.out.println("3. POUND");
 
-		return w1.add(w2);
-	}
+        int choice = sc.nextInt();
 
-	public static Weight demonstrateWeightAddition(Weight w1, Weight w2, WeightUnit targetUnit) {
+        switch (choice) {
+            case 1: return WeightUnit.KILOGRAM;
+            case 2: return WeightUnit.GRAM;
+            case 3: return WeightUnit.POUND;
+            default: throw new IllegalArgumentException("Invalid Weight Unit");
+        }
+    }
 
-		if (w1 == null || w2 == null)
-			throw new IllegalArgumentException("Weight cannot be null");
+    // ================= MAIN =================
 
-		return w1.add(w2, targetUnit);
-	}
+    public static void main(String[] args) {
 
-	public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-		Scanner sc = new Scanner(System.in);
+        System.out.println("Select Category:");
+        System.out.println("1. Length");
+        System.out.println("2. Weight");
 
-		demonstrateLengthAdditionWithTarget(sc);
-		demonstrateLengthConversion(sc);
-		demonstrateLengthAddition(sc);
+        int choice = sc.nextInt();
 
-		sc.close();
-	}
+        switch (choice) {
+            case 1:
+                demonstrateLengthOperations(sc);
+                break;
+            case 2:
+                demonstrateWeightOperations(sc);
+                break;
+            default:
+                System.out.println("Invalid Option");
+        }
+
+        sc.close();
+    }
 }
