@@ -136,4 +136,36 @@ public class Quantity<U extends Unit> {
 		}
 		return this.toBase() / other.toBase();
 	}
+	
+	// ================= UC13 OPERATIONS =================
+
+	public double multiply(Quantity<U> other) {
+
+	    if (other == null)
+	        throw new IllegalArgumentException("Operand cannot be null");
+
+	    if (!this.unit.getClass().equals(other.unit.getClass()))
+	        throw new IllegalArgumentException("Different measurement categories");
+
+	    return this.toBase() * other.toBase();
+	}
+
+	public double mod(Quantity<U> other) {
+
+	    if (other == null)
+	        throw new IllegalArgumentException("Operand cannot be null");
+
+	    if (!this.unit.getClass().equals(other.unit.getClass()))
+	        throw new IllegalArgumentException("Different measurement categories");
+
+	    if (other.toBase() == 0.0)
+	        throw new ArithmeticException("Modulus by zero");
+
+	    return this.toBase() % other.toBase();
+	}
+
+	public double power(int exponent) {
+
+	    return Math.pow(this.toBase(), exponent);
+	}
 }
