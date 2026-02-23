@@ -2,89 +2,94 @@ package com.apps.quantitymeasurement;
 
 public class Quantity<U extends Unit> {
 
-    private final double value;
-    private final U unit;
-    private static final double EPSILON = 1e-6;
+	private final double value;
+	private final U unit;
+	private static final double EPSILON = 1e-6;
 
-    public Quantity(double value, U unit) {
+	public Quantity(double value, U unit) {
 
-        if (unit == null)
-            throw new IllegalArgumentException("Unit cannot be null");
+		if (unit == null)
+			throw new IllegalArgumentException("Unit cannot be null");
 
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Value must be finite");
+		if (!Double.isFinite(value))
+			throw new IllegalArgumentException("Value must be finite");
 
-        this.value = value;
-        this.unit = unit;
-    }
+		this.value = value;
+		this.unit = unit;
+	}
 
-    private double toBase() {
-        return unit.toBase(value);
-    }
+	private double toBase() {
+		return unit.toBase(value);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 
-        if (this == obj) return true;
+		if (this == obj)
+			return true;
 
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
 
-        Quantity<?> other = (Quantity<?>) obj;
+		Quantity<?> other = (Quantity<?>) obj;
 
-        return Math.abs(this.toBase() - other.toBase()) < EPSILON;
-    }
+		// 🔥 IMPORTANT FIX: Units must be same enum type
+		if (!this.unit.getClass().equals(other.unit.getClass()))
+			return false;
 
-    @Override
-    public int hashCode() {
-        long normalized = Math.round(toBase() / EPSILON);
-        return Long.hashCode(normalized);
-    }
+		return Math.abs(this.toBase() - other.toBase()) < EPSILON;
+	}
 
-    @Override
-    public String toString() {
-        return String.format("%.2f %s", value, unit);
-    }
+	@Override
+	public int hashCode() {
+		long normalized = Math.round(toBase() / EPSILON);
+		return Long.hashCode(normalized);
+	}
 
-    public Quantity<U> convertTo(U targetUnit) {
+	@Override
+	public String toString() {
+		return String.format("%.2f %s", value, unit);
+	}
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
+	public Quantity<U> convertTo(U targetUnit) {
 
-        double baseValue = toBase();
-        double converted = targetUnit.fromBase(baseValue);
+		if (targetUnit == null)
+			throw new IllegalArgumentException("Target unit cannot be null");
 
-        converted = Math.round(converted * 1000000.0) / 1000000.0;
+		double baseValue = toBase();
+		double converted = targetUnit.fromBase(baseValue);
 
-        return new Quantity<>(converted, targetUnit);
-    }
+		converted = Math.round(converted * 1000000.0) / 1000000.0;
 
-    public Quantity<U> add(Quantity<U> other) {
+		return new Quantity<>(converted, targetUnit);
+	}
 
-        if (other == null)
-            throw new IllegalArgumentException("Operand cannot be null");
+	public Quantity<U> add(Quantity<U> other) {
 
-        double sumBase = this.toBase() + other.toBase();
-        double result = unit.fromBase(sumBase);
+		if (other == null)
+			throw new IllegalArgumentException("Operand cannot be null");
 
-        result = Math.round(result * 1000000.0) / 1000000.0;
+		double sumBase = this.toBase() + other.toBase();
+		double result = unit.fromBase(sumBase);
 
-        return new Quantity<>(result, this.unit);
-    }
+		result = Math.round(result * 1000000.0) / 1000000.0;
 
-    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+		return new Quantity<>(result, this.unit);
+	}
 
-        if (other == null)
-            throw new IllegalArgumentException("Operand cannot be null");
+	public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
+		if (other == null)
+			throw new IllegalArgumentException("Operand cannot be null");
 
-        double sumBase = this.toBase() + other.toBase();
-        double result = targetUnit.fromBase(sumBase);
+		if (targetUnit == null)
+			throw new IllegalArgumentException("Target unit cannot be null");
 
-        result = Math.round(result * 1000000.0) / 1000000.0;
+		double sumBase = this.toBase() + other.toBase();
+		double result = targetUnit.fromBase(sumBase);
 
-        return new Quantity<>(result, targetUnit);
-    }
+		result = Math.round(result * 1000000.0) / 1000000.0;
+
+		return new Quantity<>(result, targetUnit);
+	}
 }
