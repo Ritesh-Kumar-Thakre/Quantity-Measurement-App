@@ -1,15 +1,22 @@
 package com.apps.quantitymeasurement;
 
-import java.util.Scanner;
-
 public class QuantityMeasurementApp {
-
-	// Inner class to represent Feet measurement
-	public static class Feet {
+	public static class FeetEquality {
 		private final double value;
 
-		public Feet(double value) {
+		public FeetEquality() {
+			this.value = 0;
+		}
+
+		public FeetEquality(double value) {
+			if (Double.isNaN(value)) {
+				throw new IllegalArgumentException("Invalid Feet value");
+			}
 			this.value = value;
+		}
+
+		public double getValue() {
+			return value;
 		}
 
 		@Override
@@ -17,22 +24,30 @@ public class QuantityMeasurementApp {
 			if (this == obj) {
 				return true;
 			}
-
 			if (obj == null || this.getClass() != obj.getClass()) {
 				return false;
 			}
-
-			Feet other = (Feet) obj;
-			return Double.compare(this.value, other.value) == 0;
+			return Double.compare(this.value, ((FeetEquality) obj).getValue()) == 0;
 		}
+
 	}
 
-	// Inner class to represent Inches measurement
 	public static class Inches {
-		private final double value;
+		private final double inche;
 
-		public Inches(double value) {
-			this.value = value;
+		public Inches(double inche) {
+			if (Double.isNaN(inche)) {
+				throw new IllegalArgumentException("Invalid Inche value");
+			}
+			this.inche = inche;
+		}
+
+		public Inches() {
+			this.inche = 0;
+		}
+
+		public double getInche() {
+			return inche;
 		}
 
 		@Override
@@ -40,44 +55,30 @@ public class QuantityMeasurementApp {
 			if (this == obj) {
 				return true;
 			}
-
 			if (obj == null || this.getClass() != obj.getClass()) {
 				return false;
 			}
-
-			Inches other = (Inches) obj;
-			return Double.compare(this.value, other.value) == 0;
+			return Double.compare(this.inche, ((Inches) obj).getInche()) == 0;
 		}
 	}
 
-	// Static method to demonstrate Feet equality
-	public static void demonstrateFeetEquality() {
-		Scanner sc = new Scanner(System.in);
-		System.out.print("Enter first feet: ");
-		double f1 = sc.nextDouble();
-		System.out.print("Enter second feet: ");
-		double f2 = sc.nextDouble();
-		Feet feet1 = new Feet(f1);
-		Feet feet2 = new Feet(f2);
-		System.out.println("Are they equal? " + feet1.equals(feet2));
+	public static boolean demonstrateFeetEquality(double v1, double v2) {
+		FeetEquality f1 = new FeetEquality(v1);
+		FeetEquality f2 = new FeetEquality(v2);
+		return f1.equals(f2);
 	}
 
-	// Static method to demonstrate Inches equality
-	public static void demonstrateInchesEquality() {
-		Scanner sc = new Scanner(System.in);
-		System.out.print("Enter first Inche: ");
-		double i1 = sc.nextDouble();
-		System.out.print("Enter second Inche: ");
-		double i2 = sc.nextDouble();
-		Inches inch1 = new Inches(i1);
-		Inches inch2 = new Inches(i2);
-		System.out.println("Inches equality: " + inch1.equals(inch2));
+	public static boolean demonstrateInchesEquality(double v1, double v2) {
+		Inches i1 = new Inches(v1);
+		Inches i2 = new Inches(v2);
+		return i1.equals(i2);
 	}
 
-	// Main method
 	public static void main(String[] args) {
-		demonstrateFeetEquality();
-		
-		demonstrateInchesEquality();
+		FeetEquality feet1 = new FeetEquality(1);
+		FeetEquality feet2 = new FeetEquality();
+		System.out.println(feet1.equals(feet2));
+
 	}
+
 }
