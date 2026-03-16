@@ -1,101 +1,99 @@
 package com.apps.quantitymeasurement;
 
 public class Length {
-
-    private final double value;
-    private final LengthUnit unit;
-    private static final double EPSILON = 1e-6;
-
-    public Length(double value, LengthUnit unit) {
-
-        if (unit == null)
-            throw new IllegalArgumentException("Unit cannot be null");
-
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Value must be finite");
-
-        this.value = value;
-        this.unit = unit;
+	private static final double EPSILON = 0.0001;
+	private double value;
+	private LengthUnit len;
+    
+     public Length() {};
+   
+     public Length(double value,LengthUnit len) throws InvalidUnitMeasurementException {
+    	 if(Double.isNaN(value)||Double.isInfinite(value)) {
+    		 throw new IllegalArgumentException("Invalid Input");
+    	 }
+    	 if(len==null) {
+    		 throw new InvalidUnitMeasurementException("Unit is null");
+    	 }
+    	 this.value = value;
+    	 this.len = len;
+     }
+     
+     public double getValue() {
+    	 return value;
+     }
+     public LengthUnit getLen() {
+    	 return len;
+     }
+//     To convert value to their base unit  
+     
+     public boolean compare(Length lengthUnit) {
+    	 if(lengthUnit==null)return false;
+    	  return Math.abs(this.len.convertToBaseUnit(value) - lengthUnit.len.convertToBaseUnit(lengthUnit.getValue())) < EPSILON;
+	}
+     
+//     overrided .equals methods to check if two units are equal or not 
+     @Override
+    public boolean equals(Object obj) {
+        if(this==obj) {
+        	return true;
+        }
+        if(obj==null||this.getClass()!=obj.getClass()) {
+        	return false;
+        }
+        Length l = (Length)obj;
+        return this.compare(l);
     }
-
-    private double convertToBaseUnit() {
-        return unit.toBase(value);   // Delegated to enum
-    }
-
-    @Override
-    public boolean equals(Object o) {
-
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Length that = (Length) o;
-
-        double thisBase = this.convertToBaseUnit();
-        double thatBase = that.convertToBaseUnit();
-
-        return Math.abs(thisBase - thatBase) < EPSILON;
-    }
-
-    @Override
-    public int hashCode() {
-        long normalized = Math.round(convertToBaseUnit() / EPSILON);
-        return Long.hashCode(normalized);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%.2f %s", value, unit);
-    }
-
-    // Convert to another unit
-    public Length convertTo(LengthUnit targetUnit) {
-
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
-        double baseValue = convertToBaseUnit();
-        double convertedValue = targetUnit.fromBase(baseValue);
-
-        return new Length(convertedValue, targetUnit);
-    }
-
-    // UC6
-    public Length add(Length thatLength) {
-
-        if (thatLength == null)
-            throw new IllegalArgumentException("Operand cannot be null");
-
-        double sumBase = this.convertToBaseUnit() + thatLength.convertToBaseUnit();
-        double result = this.unit.fromBase(sumBase);
-
-        return new Length(result, this.unit);
-    }
-
-    // UC7
-    public Length add(Length thatLength, LengthUnit targetUnit) {
-
-        if (thatLength == null)
-            throw new IllegalArgumentException("Operand cannot be null");
-
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
-        double sumBase = this.convertToBaseUnit() + thatLength.convertToBaseUnit();
-        double result = targetUnit.fromBase(sumBase);
-
-        return new Length(result, targetUnit);
-    }
-
-    // Static conversion
-    public static double convert(double value, LengthUnit source, LengthUnit target) {
-
-        if (source == null || target == null)
-            throw new IllegalArgumentException("Units cannot be null");
-
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Value must be finite");
-
-        double baseValue = source.toBase(value);
-        return target.fromBase(baseValue);
-    }
+     
+     //override tostring method 
+     @Override
+	public String toString() {
+		return "Length [value=" + value + ", len=" + len + "]";
+	}
+     
+    //Conversion of unit to current unit 
+	 public Length convertTo(LengthUnit unit) throws InvalidUnitMeasurementException {
+    	 double converted = (len.convertToBaseUnit(value))/unit.getConversionFactor();
+    	 return new Length(converted,unit);
+     }
+	 private double convertBaseToTargetUnit(double lengthInInches,LengthUnit targetUnit) {
+		 return (lengthInInches*len.getConversionFactor())/targetUnit.getConversionFactor();
+	 }
+	 
+	 //Add To length and convert Unit to current unit
+	 public Length add(Length thatLength) throws InvalidUnitMeasurementException {
+		 if(thatLength==null)  throw new IllegalArgumentException("Object is null");
+		 
+		 thatLength = thatLength.convertTo(len);
+		 return new Length(value+thatLength.value, len);
+	 }
+	 private Length addAndConvert(Length length,LengthUnit targetUnit) throws InvalidUnitMeasurementException{
+		 if(length==null||targetUnit==null) {
+			 throw new IllegalArgumentException("Invalid input");
+		 }
+		double temp1 = length.convertBaseToTargetUnit(length.getValue(), targetUnit);
+		double temp2 = convertBaseToTargetUnit(this.getValue(), targetUnit);
+		 return new Length(temp1+temp2,targetUnit);
+	 }
+	 
+	 public Length add(Length length,LengthUnit targetUnit) throws InvalidUnitMeasurementException{
+		 return addAndConvert(length, targetUnit);
+	 }
+	 
+	 //Main Method to invoke the methods locally 
+     public static void main(String[] args) throws InvalidUnitMeasurementException {
+		Length len1 = new Length(1,LengthUnit.FEET);
+		Length len2 = new Length(12,LengthUnit.INCHES);
+		
+		System.out.println("Are Length equals? :"+len1.equals(len2));
+	    
+		Length len3 = new Length(36,LengthUnit.INCHES);
+		Length len4 = new Length(1,LengthUnit.YARD);
+		
+		System.out.println("Are Inches and Yards equals : "+len3.equals(len4));
+		
+		Length len5 = new Length(100,LengthUnit.CENTIMETRE);
+		Length len6 = new Length(39.3701,LengthUnit.INCHES);
+		
+		System.out.println("Are Inches and Centimeter equals : "+len5.equals(len6));
+     }
 }
