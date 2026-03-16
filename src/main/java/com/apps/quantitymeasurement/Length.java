@@ -1,127 +1,88 @@
 package com.apps.quantitymeasurement;
 
 public class Length {
-
-	private final double value;
-	private final LengthUnit unit;
-	private static final double EPSILON = 1e-6;
-
-	// Enum to represent supported units of length
-	public enum LengthUnit {
-
-		FEET(12.0), // Conversion factor: 1 Foot = 12 Inches
-		INCHES(1.0), // Conversion factor: 1 Inch = 1 Inch (base unit)
-		YARDS(36.0), // Conversion factor: 1 Yard = 36 Inches
-		CENTIMETERS(0.393701); // Conversion factor: 1 cm = 0.393701 Inches
-
-		private final double conversionFactor;
-
-		LengthUnit(double conversionFactor) {
-			this.conversionFactor = conversionFactor;
-		}
-
-		public double getConversionFactor() {
-			return conversionFactor;
-		}
+	private static final double EPSILON = 0.0001;
+	private double value;
+	private LengthUnit len;
+     public enum LengthUnit{
+    	 FEET(12.0),
+    	 INCHES(1.0),
+    	 YARD(36.0),
+    	 CENTIMETRE(0.393701);
+    	 
+    	 private final double conversion;
+    	 
+    	LengthUnit(double conversion) {
+    		this.conversion = conversion;
+    	}
+    	
+    	public double getConversionFactor() {
+    		return conversion;
+    	}
+     }
+     public Length() {};
+   
+     public Length(double value,LengthUnit len) throws InvalidUnitMeasurementException {
+    	 if(Double.isNaN(value)||Double.isInfinite(value)) {
+    		 throw new IllegalArgumentException("Invalid Input");
+    	 }
+    	 if(len==null) {
+    		 throw new InvalidUnitMeasurementException("Unit is null");
+    	 }
+    	 this.value = value;
+    	 this.len = len;
+     }
+     
+     public double getValue() {
+    	 return value;
+     }
+     private double convertToBaseUnit() {
+    	 return value*len.getConversionFactor();
+     }
+    
+     public boolean compare(Length lengthUnit) {
+    	 if(lengthUnit==null)return false;
+    	  return Math.abs(this.convertToBaseUnit() - lengthUnit.convertToBaseUnit()) < EPSILON;
 	}
-
-	// Constructor to initialize Length with value and unit
-	public Length(double value, LengthUnit unit) {
-		if (unit == null) {
-			throw new IllegalArgumentException("Unit cannot be null");
-		}
-		if (!Double.isFinite(value)) {
-			throw new IllegalArgumentException("value must be a finite number");
-		}
-
-		this.value = value;
-		this.unit = unit;
-	}
-
-	// Convert the length to base unit (inches)
-	private double convertToBaseUnit() {
-		return value * unit.getConversionFactor();
-	}
-
-	// Private helper method to compare two Lengths
-	private boolean compare(Length that) {
-		double thisValue = this.convertToBaseUnit();
-		double thatValue = that.convertToBaseUnit();
-		return Math.abs(thisValue - thatValue) < EPSILON;
-	}
-
-	// Override equals() to compare lengths across units
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-		Length that = (Length) o;
-		return compare(that);
-	}
-
-	@Override
-	public int hashCode() {
-		long normalized = Math.round(convertToBaseUnit() / EPSILON);
-		return Long.hashCode(normalized);
-	}
-
-	@Override
+     
+     @Override
+    public boolean equals(Object obj) {
+        if(this==obj) {
+        	return true;
+        }
+        if(obj==null||this.getClass()!=obj.getClass()) {
+        	return false;
+        }
+        Length l = (Length)obj;
+        return this.compare(l);
+    }
+     
+     
+     @Override
 	public String toString() {
-		return String.format("%.2f %s", value, unit);
+		return "Length [value=" + value + ", len=" + len + "]";
 	}
 
-	// Convert this length to the specified target unit
-	public Length convertTo(LengthUnit targetUnit) {
-		if (targetUnit == null) {
-			throw new IllegalArgumentException("Target unit cannot be null");
-		}
-		double baseValue = this.convertToBaseUnit();
-		double convertedValue = baseValue / targetUnit.getConversionFactor();
-
-		convertedValue = Math.round(convertedValue * 100.0) / 100.0;
-		return new Length(convertedValue, targetUnit);
-	}
-	
-	// Static method for direct numeric conversion
-	public static double convert(double value, LengthUnit source, LengthUnit target) {
-	    if (source == null || target == null) {
-	        throw new IllegalArgumentException("Units cannot be null");
-	    }
-	    if (!Double.isFinite(value)) {
-	        throw new IllegalArgumentException("Value must be a finite number");
-	    }
-
-	    double baseValue = value * source.getConversionFactor();
-	    double convertedValue = baseValue / target.getConversionFactor();
-	    return Math.round(convertedValue * 100.0) / 100.0;
-	}
-
-
-	// Main method for standalone testing
-	public static void main(String[] args) {
-		Length length1 = new Length(1.0, LengthUnit.FEET);
-		Length length2 = new Length(12.0, LengthUnit.INCHES);
-		System.out.println("Are lengths equal? " + length1.equals(length2)); // true
-
-		Length length3 = new Length(1.0, LengthUnit.YARDS);
-		Length length4 = new Length(36.0, LengthUnit.INCHES);
-		System.out.println("Are lengths equal? " + length3.equals(length4)); // true
-
-		Length length5 = new Length(100.0, LengthUnit.CENTIMETERS);
-		Length length6 = new Length(39.3701, LengthUnit.INCHES);
-		System.out.println("Are lengths equal? " + length5.equals(length6)); // true
-
-		System.out.println("Convert 3 Feet to Inches: " + length1.convertTo(LengthUnit.INCHES));
-		System.out.println("Convert 2 Yards to Inches: " + length3.convertTo(LengthUnit.INCHES));
-		System.out.println("Convert 30.48 cm to Feet: " + new Length(30.48, LengthUnit.CENTIMETERS).convertTo(LengthUnit.FEET));
-		System.out.println("Convert 72 Inches to Yards: " + new Length(72.0, LengthUnit.INCHES).convertTo(LengthUnit.YARDS));
-		System.out.println("Convert 0 Feet to Inches: " + new Length(0.0, LengthUnit.FEET).convertTo(LengthUnit.INCHES));
-		System.out.println("Convert -1 Foot to Inches: " + new Length(-1.0, LengthUnit.FEET).convertTo(LengthUnit.INCHES));
-	}
+	 public Length convertTo(LengthUnit unit) throws InvalidUnitMeasurementException {
+    	 double converted = (this.value*len.getConversionFactor())/unit.getConversionFactor();
+    	 return new Length(converted,unit);
+     }
+	 
+	 
+     public static void main(String[] args) throws InvalidUnitMeasurementException {
+		Length len1 = new Length(1,Length.LengthUnit.FEET);
+		Length len2 = new Length(12,Length.LengthUnit.INCHES);
+		
+		System.out.println("Are Length equals? :"+len1.equals(len2));
+	    
+		Length len3 = new Length(36,LengthUnit.INCHES);
+		Length len4 = new Length(1,LengthUnit.YARD);
+		
+		System.out.println("Are Inches and Yards equals : "+len3.equals(len4));
+		
+		Length len5 = new Length(100,LengthUnit.CENTIMETRE);
+		Length len6 = new Length(39.3701,LengthUnit.INCHES);
+		
+		System.out.println("Are Inches and Centimeter equals : "+len5.equals(len6));
+     }
 }
