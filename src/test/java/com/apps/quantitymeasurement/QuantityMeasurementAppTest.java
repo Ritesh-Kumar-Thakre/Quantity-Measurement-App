@@ -1,4 +1,3 @@
-
 package com.apps.quantitymeasurement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.entity.QuantityDTO;
 import com.apps.quantitymeasurement.model.Quantity;
 import com.apps.quantitymeasurement.unit.LengthUnit;
 import com.apps.quantitymeasurement.unit.Temperature;
@@ -27,6 +28,8 @@ public class QuantityMeasurementAppTest {
 
 	Quantity<VolumneUnit> v1;
 	Quantity<VolumneUnit> v2;
+
+	private static final QuantityMeasurementController controllers = QuantityMeasurementApp.getInstance().controller;
 
 	@Test
 	public void testMeasurableInterfaceLengthUnitImplementation() {
@@ -864,4 +867,53 @@ public class QuantityMeasurementAppTest {
 		assertTrue(new Quantity<>(100.0, Temperature.CELSIUS).equals(new Quantity<>(212.0, Temperature.FAHRENHEIT)));
 	}
 
+	@Test
+	public void lengthFeetEqualsInches() {
+		QuantityDTO q1 = new QuantityDTO(2, "FEET", "LENGTH");
+		QuantityDTO q2 = new QuantityDTO(24, "INCHES", "LENGTH");
+
+		assertTrue(controllers.performComparison(q1, q2));
+	}
+
+	@Test
+	public void lengthYardsEqualsFeet() {
+		QuantityDTO q1 = new QuantityDTO(1.0, "YARD", "LENGTH");
+		QuantityDTO q2 = new QuantityDTO(3.0, "FEET", "LENGTH");
+
+		assertTrue(controllers.performComparison(q1, q2));
+	}
+
+	@Test
+	public void weightKilogramEqualsGrams() {
+		QuantityDTO q1 = new QuantityDTO(1, "KG", "WEIGHT");
+		QuantityDTO q2 = new QuantityDTO(1000, "GRAM", "WEIGHT");
+
+		assertTrue(controllers.performComparison(q1, q2));
+	}
+
+	@Test
+	public void convertLengthFeetToInches() {
+		QuantityDTO q1 = new QuantityDTO(2.0, "FEET", "LENGTH");
+		QuantityDTO q2 = new QuantityDTO(0.0, "INCHES", "LENGTH");
+
+		assertEquals(24.0, controllers.performConversion(q1, q2).getValue());
+	}
+
+	@Test
+	public void addLengthFeetAndInches() {
+		QuantityDTO q1 = new QuantityDTO(2.0, "FEET", "LENGTH");
+		QuantityDTO q2 = new QuantityDTO(12.0, "INCHES", "LENGTH");
+
+		assertEquals(3.0, controllers.performAddition(q1, q2).getValue());
+	}
+
+	@Test
+	public void UnitMisMatchFeetAndGram() {
+		QuantityDTO q1 = new QuantityDTO(2.0, "FEET", "LENGTH");
+		QuantityDTO q2 = new QuantityDTO(12.0, "GRAM", "WEIGHT");
+
+		assertThrows(IllegalArgumentException.class, () -> {
+			controllers.performAddition(q1, q2);
+		});
+	}
 }
