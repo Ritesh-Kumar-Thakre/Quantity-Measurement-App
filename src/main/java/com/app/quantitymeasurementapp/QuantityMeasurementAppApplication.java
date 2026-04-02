@@ -9,5 +9,4 @@ public class QuantityMeasurementAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QuantityMeasurementAppApplication.class, args);
 	}
-
 }
