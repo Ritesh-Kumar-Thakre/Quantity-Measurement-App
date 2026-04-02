@@ -15,7 +15,7 @@ import com.app.quantitymeasurementapp.repository.QuantityMeasurentRepository;
 import com.app.quantitymeasurementapp.unit.IMeasurable;
 import com.app.quantitymeasurementapp.unit.LengthUnit;
 import com.app.quantitymeasurementapp.unit.Temperature;
-import com.app.quantitymeasurementapp.unit.VolumneUnit;
+import com.app.quantitymeasurementapp.unit.VolumeUnit;
 import com.app.quantitymeasurementapp.unit.WeightUnit;
 
 @Service
@@ -53,7 +53,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 		validateArithmeticOperation(q1, q2);
 		Quantity<IMeasurable> q3 = new Quantity<IMeasurable>(q1.getValue(),q1.getUnit());
 		Quantity<IMeasurable> q4 = new Quantity<IMeasurable>(q2.getValue(), q2.getUnit());
-		q4 = q3.convertTo(q4);
+		q4 = q4.convertTo(q3);
 		
 		QuantityDTO q5 = new QuantityDTO(q4.getValue(),q4.getUnit().getUnitName(),q4.getUnit().getClass().getSimpleName());
 		repository.save(new QuantityMeasurementEntity(thisQuantityDTO, thatQuantityDTO, Operation.CONVERSION.toString(),q5));
@@ -195,7 +195,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     private QuantityModel<?> getQuantityInstance(QuantityDTO dto){
     	switch(dto.getMeasurementType()) {
     	case "VolumeUnit":
-    		return new QuantityModel<>(dto.getValue(),VolumneUnit.valueOf(dto.getUnit()));
+    		return new QuantityModel<>(dto.getValue(),VolumeUnit.valueOf(dto.getUnit()));
     	case "WeightUnit":
     		return new QuantityModel<>(dto.getValue(),WeightUnit.valueOf(dto.getUnit()));
     	case "LengthUnit":
