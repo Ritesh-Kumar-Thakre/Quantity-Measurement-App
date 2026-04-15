@@ -1,33 +1,92 @@
-HELP.md
+# ===============================
+# 🚫 BUILD OUTPUT (Maven / Java)
+# ===============================
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
 
-### STS ###
-.apt_generated
+# ===============================
+# 🧠 IDE FILES
+# ===============================
+
+# Eclipse / STS
+.settings/
 .classpath
 .factorypath
 .project
-.settings
-.springBeans
-.sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# IntelliJ
+.idea/
 *.iml
+*.iws
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# VS Code
 .vscode/
+
+# ===============================
+# 💻 OS FILES
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# 🔐 ENV / SECRETS
+# ===============================
+.env
+.env.*
+!.env.example
+
+# ===============================
+# ⚙️ SPRING CONFIG (LOCAL ONLY)
+# ===============================
+**/application-local.properties
+**/application-*.local.properties
+**/application-secret.properties
+
+# ===============================
+# 🗄️ DATABASE FILES (DEV ONLY)
+# ===============================
+data/*.mv.db
+data/*.trace.db
+data/*.ser
+
+# ===============================
+# 📜 LOGS & RUNTIME FILES
+# ===============================
+logs/
+**/logs/
+*.log
+*.out
+*.pid
+hs_err_pid*
+replay_pid*
+
+# ===============================
+# 🔀 TEMP / MERGE FILES
+# ===============================
+*.orig
+*.rej
+*.swp
+
+# ===============================
+# 🐳 DOCKER (OPTIONAL)
+# ===============================
+# Uncomment if needed
+# docker-data/
+# mysql-data/
+# *.tar
+
+# ===============================
+# 🧪 TEST OUTPUT
+# ===============================
+surefire-reports/
+failsafe-reports/
+
+# ===============================
+# 📦 CACHE / TOOLING
+# ===============================
+.mvn/timing.properties
