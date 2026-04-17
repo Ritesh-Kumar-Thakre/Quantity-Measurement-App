@@ -1,21 +1,92 @@
-# Ignore Maven build output
+# ===============================
+# 🚫 BUILD OUTPUT (Maven / Java)
+# ===============================
 target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
 
-# Ignore logs
-*.log
+# ===============================
+# 🧠 IDE FILES
+# ===============================
 
-# Ignore Eclipse files
-.project
-.classpath
+# Eclipse / STS
 .settings/
+.classpath
+.factorypath
+.project
 
-# Ignore IntelliJ files
+# IntelliJ
 .idea/
 *.iml
+*.iws
+*.ipr
 
-# Ignore VS Code
+# VS Code
 .vscode/
 
-# Ignore OS files
+# ===============================
+# 💻 OS FILES
+# ===============================
 .DS_Store
 Thumbs.db
+
+# ===============================
+# 🔐 ENV / SECRETS
+# ===============================
+.env
+.env.*
+!.env.example
+
+# ===============================
+# ⚙️ SPRING CONFIG (LOCAL ONLY)
+# ===============================
+**/application-local.properties
+**/application-*.local.properties
+**/application-secret.properties
+
+# ===============================
+# 🗄️ DATABASE FILES (DEV ONLY)
+# ===============================
+data/*.mv.db
+data/*.trace.db
+data/*.ser
+
+# ===============================
+# 📜 LOGS & RUNTIME FILES
+# ===============================
+logs/
+**/logs/
+*.log
+*.out
+*.pid
+hs_err_pid*
+replay_pid*
+
+# ===============================
+# 🔀 TEMP / MERGE FILES
+# ===============================
+*.orig
+*.rej
+*.swp
+
+# ===============================
+# 🐳 DOCKER (OPTIONAL)
+# ===============================
+# Uncomment if needed
+# docker-data/
+# mysql-data/
+# *.tar
+
+# ===============================
+# 🧪 TEST OUTPUT
+# ===============================
+surefire-reports/
+failsafe-reports/
+
+# ===============================
+# 📦 CACHE / TOOLING
+# ===============================
+.mvn/timing.properties
